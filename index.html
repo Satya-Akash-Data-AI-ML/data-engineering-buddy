@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Engineering Buddy</title>
+<style>
+  body {font-family: Arial, sans-serif; background:#edf3f9; margin:0; padding:25px;}
+  .box {max-width:680px; margin:auto; background:white; padding:20px; border:1px solid #cbd5e1; border-radius:10px;}
+  h1 {color:#23466c; margin-bottom:4px;}
+  .note {color:#526273; font-size:14px;}
+  #chat {height:340px; overflow-y:auto; background:#f9fbfd; border:1px solid #d0d9e2; padding:12px; margin:15px 0;}
+  .message {margin:9px 0; padding:9px; border-radius:7px; line-height:1.5; white-space:pre-wrap;}
+  .bot {background:#e6eef9; margin-right:35px;}
+  .user {background:#dff1e8; margin-left:35px;}
+  input {box-sizing:border-box; width:75%; padding:10px; border:1px solid #aaa; border-radius:4px;}
+  button {padding:10px; border:0; border-radius:4px; background:#295d91; color:white; cursor:pointer;}
+  .suggestions button {margin:4px 4px 4px 0; background:#5f778d; font-size:13px;}
+  .footer {font-size:12px; color:#566; padding-top:12px;}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>Data Engineering Buddy 🤖</h1>
+  <p class="note">A small beginner project to explain common data engineering terms.</p>
+  <div id="chat" role="log" aria-live="polite"></div>
+  <div class="suggestions">
+    <button onclick="ask('What is data engineering?')">Data engineering</button>
+    <button onclick="ask('What is ETL?')">ETL</button>
+    <button onclick="ask('What is SQL?')">SQL</button>
+    <button onclick="ask('What is a pipeline?')">Pipelines</button>
+  </div>
+  <form id="form">
+    <input id="question" aria-label="Your question" placeholder="Ask a simple question..." required>
+    <button type="submit">Send</button>
+  </form>
+  <p class="footer">This webpage is a rule-based practice prototype, not a generative AI model. The AI version can be built using the supplied assistant prompt.</p>
+</div>
+<script>
+// A small list of topics and easy-to-understand answers.
+const topics = [
+  {words:['etl'], answer:'ETL means Extract, Transform, Load. First we collect data, then clean or change it, and finally store it somewhere useful. Example: move sales data from CSV files into a database.'},
+  {words:['sql'], answer:'SQL is a language used to work with data in relational databases. For example: SELECT * FROM customers; shows all rows in a customers table.'},
+  {words:['pipeline'], answer:'A data pipeline moves data from one place to another through a set of steps. Example: website orders → clean data → database → sales dashboard.'},
+  {words:['data engineer','data engineering'], answer:'Data engineering is about collecting, moving, cleaning, and organizing data so it is ready for reporting or analysis. A data engineer often builds pipelines and works with SQL.'},
+  {words:['database'], answer:'A database stores organized information. Think of it as a digital place to save customer records, orders, or products.'},
+  {words:['warehouse'], answer:'A data warehouse combines data from different sources for analysis and reporting. It is usually different from the database that runs a live app.'},
+  {words:['python'], answer:'Python is a programming language. Data engineers can use it to read files, clean data, and automate repetitive jobs.'},
+  {words:['cloud'], answer:'Cloud platforms provide computing and storage over the internet. Data engineers use services from AWS, Azure, or Google Cloud to process and store data.'},
+  {words:['batch'], answer:'Batch processing handles data in groups at scheduled times. Example: preparing yesterday’s sales report every morning.'},
+  {words:['stream'], answer:'Streaming processes information as new events arrive. Example: handling incoming delivery updates as they happen.'}
+];
+function addMessage(who, message) {
+  const div = document.createElement('div');
+  div.className = 'message ' + who;
+  div.textContent = (who === 'bot' ? 'Buddy: ' : 'You: ') + message;
+  document.getElementById('chat').appendChild(div);
+  document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+}
+function reply(question) {
+  const text = question.toLowerCase();
+  if (text.includes('hello') || text.includes('hi ')) return 'Hi! I can explain ETL, SQL, pipelines, databases, Python, and some other basic topics. What would you like to learn?';
+  for (const topic of topics) {
+    if (topic.words.some(word => text.includes(word))) return topic.answer + '\n\nWould you like to ask about another topic?';
+  }
+  return 'I am still learning and do not have an answer for that topic yet. Try asking about ETL, SQL, pipelines, databases, or Python.';
+}
+function ask(text) {addMessage('user',text); addMessage('bot',reply(text));}
+document.getElementById('form').addEventListener('submit', function(event) {
+  event.preventDefault();
+  const input = document.getElementById('question');
+  const question = input.value.trim();
+  if (question) ask(question);
+  input.value = '';
+});
+addMessage('bot','Hello! I am Data Engineering Buddy. I can help with basic data engineering words. Try one of the buttons or type your question.');
+</script>
+</body>
+</html>
